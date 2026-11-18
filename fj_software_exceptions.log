@@ -1,0 +1,6 @@
+2026-11-19 00:31:28 - [ERROR] - Custom Exception Triggered: Invalid email format: correo_invalido_sin_caracteres
+2026-11-19 00:31:28 - [WARNING] - Error al asignar email a cliente C002: Invalid email format: correo_invalido_sin_caracteres
+2026-11-19 00:31:28 - [INFO] - Reserva R101 confirmada exitosamente.
+2026-11-19 00:31:28 - [ERROR] - Custom Exception Triggered: Reservation duration must be a positive integer.
+2026-11-19 00:31:28 - [ERROR] - Fallo al confirmar reserva R102: Reservation duration must be a positive integer.
+2026-11-19 00:31:28 - [INFO] - Reserva R103 confirmada exitosamente.
