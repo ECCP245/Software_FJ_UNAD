@@ -17,3 +17,17 @@ Sistema de gestion en Python orientado a objetos que administra los clientes, re
 3. Ejecute el archivo principal desde la terminal:
    ```bash
    python main.py
+## Aporte de Jaminton Trespalacios Castillo (JamintonTC)
+
+Se integra la suite de pruebas unitarias automatizadas en el archivo `pruebas_unitarias.py` utilizando la librería estándar `unittest` de Python, completamente documentada línea por línea con comentarios `#`.
+
+Las pruebas validan de forma automatizada:
+- Registro correcto de clientes y lanzamiento de `InvalidDataFJError` ante nombres vacíos.
+- Rechazo de servicios con costos base negativos.
+- Cálculos polimórficos de tarifas para alquiler de equipos y asesorías especializadas.
+- Confirmación exitosa de reservas y manejo controlado de reservas con duración inválida mediante `FailedReservationFJError`.
+
+Para ejecutar las pruebas unitarias desde la terminal:
+```bash
+python -m unittest pruebas_unitarias.py
+```
