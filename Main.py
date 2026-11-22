@@ -1,89 +1,196 @@
-# Aqui estoy importando las librerias para los errores los registross, y llamando las clases de models y exceptions
-# Preguntar si la libreria os es obligatoria o si con sys basta
+# Proyecto base de Evelyn Carolina Calvache Pabón.
+# Aporte local de Yeison Andrés Bran Henao: excepciones y simulaciones independientes.
+
+# Importa el registro de eventos y el manejo de rutas de archivos.
 import logging
 import os
-from exceptions import InvalidDataFJError, ServiceNotAvailableFJError, FailedReservationFJError
-from models import (
-    Client,
-    RoomReservationService,
-    EquipmentRentalService,
-    SpecializedConsultingService,
-    Reservation
-)
+# Importa las clases originales, con las correcciones del aporte.
+from models import Client, RoomReservationService, EquipmentRentalService
+from models import SpecializedConsultingService, Reservation
 
-# Configurando el archivo de registro en disco dentro de la carpeta del proyecto
-current_dir = os.path.dirname(os.path.abspath(__file__))
-log_file_path = os.path.join(current_dir, 'fj_software_exceptions.log')
 
-logging.basicConfig(
-    filename=log_file_path,
-    level=logging.INFO,
-    format='%(asctime)s - [%(levelname)s] - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+# Muestra y registra las operaciones que terminaron correctamente.
+def registrar_exito(numero, mensaje):
+    print(f"[Simulacion {numero:02d}] OK: {mensaje}")
+    logging.info(f"Simulacion {numero:02d}: {mensaje}")
 
-# Bloque principal con las simulaciones
+
+# Registra el error y su causa sin detener las siguientes simulaciones.
+def registrar_error(numero, error):
+    print(f"[Simulacion {numero:02d}] ERROR CONTROLADO: {error}")
+    # exc_info conserva la información completa, incluido raise ... from ... .
+    logging.error(f"Simulacion {numero:02d}: {error}", exc_info=True)
+
+
+# Ejecuta el programa solamente cuando se abre este archivo directamente.
 if __name__ == "__main__":
-    print(">>> STARTING SOFTWARE FJ SYSTEM SIMULATIONS (10+ OPERATIONS) <<<\n")
-    
+    # Ubica el log junto a los archivos del proyecto.
+    carpeta = os.path.dirname(os.path.abspath(__file__))
+    ruta_log = os.path.join(carpeta, "fj_software_exceptions.log")
+    # Conserva los eventos y errores de cada ejecución.
+    logging.basicConfig(filename=ruta_log, level=logging.INFO, encoding="utf-8",
+                        format="%(asctime)s - [%(levelname)s] - %(message)s")
+    # Anuncia el inicio de la ejecución.
+    print("SOFTWARE FJ - 16 SIMULACIONES\n")
+    logging.info("Inicio de las 16 simulaciones.")
+    # Las listas guardan solamente los objetos creados correctamente.
     clients_list = []
     services_list = []
     reservations_list = []
+    # Inicializa las referencias utilizadas en operaciones posteriores.
+    c1 = None
+    s1 = None
+    s2 = None
+    s3 = None
+    r1 = None
 
+    # Simulación 1: registra un cliente con datos correctos.
     try:
-        # Simulacion 1
         c1 = Client("C001", "Carlos Gomez", "carlos.gomez@softwarefj.com")
         clients_list.append(c1)
-        print(f"[Simulacion 1] -> Client registered: {c1.name}")
+    except Exception as error:
+        registrar_error(1, error)
+    else:
+        registrar_exito(1, c1.get_details())
 
-        # Simulacion 2
-        c2 = Client("C002", "Ana Perez", "correo_invalido_sin_caracteres")
+    # Simulación 2: rechaza el correo inválido y continúa con la simulación 3.
+    try:
+        c2 = Client("C002", "Ana Perez", "correo_invalido")
         clients_list.append(c2)
-        print(f"[Simulacion 2] -> Client with invalid email handled: {c2.email}")
+    except Exception as error:
+        registrar_error(2, error)
+    else:
+        registrar_exito(2, c2.get_details())
 
-        # Simulacion 3
+    # Simulación 3: rechaza un nombre vacío.
+    try:
+        c3 = Client("C003", "   ", "cliente@softwarefj.com")
+        clients_list.append(c3)
+    except Exception as error:
+        registrar_error(3, error)
+    else:
+        registrar_exito(3, c3.get_details())
+
+    # Simulación 4: crea correctamente un servicio de sala.
+    try:
         s1 = RoomReservationService("SR01", 200.0, 15)
         services_list.append(s1)
-        print(f"[Simulacion 3] -> {s1.describe_service()}")
+    except Exception as error:
+        registrar_error(4, error)
+    else:
+        registrar_exito(4, s1.describe_service())
 
-        # Simulacion 4
+    # Simulación 5: crea correctamente un servicio de equipos.
+    try:
         s2 = EquipmentRentalService("SE01", 45.0, "Workstation PC")
         services_list.append(s2)
-        print(f"[Simulacion 4] -> {s2.describe_service()}")
+    except Exception as error:
+        registrar_error(5, error)
+    else:
+        registrar_exito(5, s2.describe_service())
 
-        # Simulacion 5
+    # Simulación 6: crea correctamente un servicio de asesoría.
+    try:
         s3 = SpecializedConsultingService("SC01", 350.0, "Cloud Migration")
         services_list.append(s3)
-        print(f"[Simulacion 5] -> {s3.describe_service()}")
+    except Exception as error:
+        registrar_error(6, error)
+    else:
+        registrar_exito(6, s3.describe_service())
 
-        # Simulacion 6
-        r1 = Reservation("R101", c1, s1, duration=3)
-        res_msg1 = r1.confirm_reservation()
+    # Simulación 7: rechaza un servicio con costo negativo.
+    try:
+        servicio_invalido = RoomReservationService("SR02", -200.0, 15)
+        services_list.append(servicio_invalido)
+    except Exception as error:
+        registrar_error(7, error)
+    else:
+        registrar_exito(7, servicio_invalido.describe_service())
+
+    # Simulación 8: confirma una reserva y ejecuta su bloque else.
+    try:
+        r1 = Reservation("R101", c1, s1, 3)
+        mensaje = r1.confirm_reservation()
         reservations_list.append(r1)
-        print(f"[Simulacion 6] -> {res_msg1}")
+    except Exception as error:
+        registrar_error(8, error)
+    else:
+        registrar_exito(8, mensaje)
 
-        # Simulacion 7 
-        r2 = Reservation("R102", c1, s2, duration=0)
-        res_msg2 = r2.confirm_reservation()
+    # Simulación 9: una duración cero produce una excepción encadenada.
+    try:
+        r2 = Reservation("R102", c1, s2, 0)
+        mensaje = r2.confirm_reservation()
         reservations_list.append(r2)
-        print(f"[Simulacion 7] -> {res_msg2}")
+    except Exception as error:
+        registrar_error(9, error)
+    else:
+        registrar_exito(9, mensaje)
 
-        # Simulacion 8
-        r3 = Reservation("R103", c1, s3, duration=2)
-        res_msg3 = r3.confirm_reservation()
+    # Simulación 10: controla la reserva de un servicio inexistente.
+    try:
+        r3 = Reservation("R103", c1, None, 2)
+        mensaje = r3.confirm_reservation()
         reservations_list.append(r3)
-        print(f"[Simulacion 8] -> {res_msg3}")
+    except Exception as error:
+        registrar_error(10, error)
+    else:
+        registrar_exito(10, mensaje)
 
-        # Simulacion 9
-        cost_room = s1.calculate_store if hasattr(s1, 'calculate_store') else s1.calculate_cost(discount=0.15, tax=0.19)
-        print(f"[Simulacion 9] -> Calculated Room Cost (with discount): ${cost_room}")
+    # Simulación 11: calcula el costo de sala con los parámetros opcionales.
+    try:
+        costo_sala = s1.calculate_cost(discount=0.15, tax=0.19)
+    except Exception as error:
+        registrar_error(11, error)
+    else:
+        registrar_exito(11, f"Room cost with discount and tax: {costo_sala:.2f}")
 
-        # Simulacion 10
-        cost_equip = s2.calculate_cost(hours=5, insurance_fee=15.0)
-        print(f"[Simulacion 10] -> Calculated Equipment Cost (5 hours): ${cost_equip}")
+    # Simulación 12: rechaza horas negativas sin devolver un costo alternativo.
+    try:
+        costo_equipo = s2.calculate_cost(hours=-2)
+    except Exception as error:
+        registrar_error(12, error)
+    else:
+        registrar_exito(12, f"Equipment cost: {costo_equipo:.2f}")
 
-        print("\n>>> ALL 10+ SIMULATIONS COMPLETED SUCCESSFULLY. CHECK 'fj_software_exceptions.log' <<<\n")
+    # Simulación 13: cancela la reserva confirmada en la simulación 8.
+    try:
+        mensaje = r1.cancel_reservation()
+    except Exception as error:
+        registrar_error(13, error)
+    else:
+        registrar_exito(13, mensaje)
 
-    except Exception as general_err:
-        logging.critical(f"Error critico general: {general_err}")
-        print(f"Critical System Error: {general_err}")
+    # Simulación 14: calcula el alquiler de equipos después de un error anterior.
+    try:
+        costo_equipo = s2.calculate_cost(hours=5, insurance_fee=15.0)
+    except Exception as error:
+        registrar_error(14, error)
+    else:
+        registrar_exito(14, f"Equipment cost for 5 hours: {costo_equipo:.2f}")
+
+    # Simulación 15: demuestra que también se controla un TypeError de Python.
+    try:
+        # La ausencia de nombre y correo es intencional en este caso de prueba.
+        cliente_incompleto = Client("C004")
+        clients_list.append(cliente_incompleto)
+    except Exception as error:
+        registrar_error(15, error)
+    else:
+        registrar_exito(15, cliente_incompleto.get_details())
+
+    # Simulación 16: confirma que el programa continúa después del TypeError.
+    try:
+        costo_asesoria = s3.calculate_cost(complexity_factor=1.5)
+    except Exception as error:
+        registrar_error(16, error)
+    else:
+        registrar_exito(16, f"Consulting cost: {costo_asesoria:.2f}")
+
+    # El cierre indica operaciones procesadas, no que todos los datos eran válidos.
+    print("\nFIN: se procesaron las 16 simulaciones, incluidos los errores de prueba.")
+    print(f"Clientes válidos: {len(clients_list)}")
+    print(f"Servicios válidos: {len(services_list)}")
+    print(f"Reservas confirmadas registradas (incluye canceladas después): {len(reservations_list)}")
+    print("Consulte fj_software_exceptions.log para revisar los detalles.")
+    logging.info("Fin de las 16 simulaciones.")
