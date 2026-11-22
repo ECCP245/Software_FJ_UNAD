@@ -1,21 +1,18 @@
-# Aqui estoy importando la libreria de python para guardar en el log cada vez que salte una excepcion
-import logging
+# Código base: proyecto Software_FJ_UNAD de Evelyn Carolina Calvache Pabón.
+# Aporte local de Yeison Andrés Bran Henao: manejo sencillo de excepciones.
+# El error se registra cuando se captura, para no repetirlo en el log.
 
-# Excepciones 
+
+# Identifica errores en los datos de entrada.
 class InvalidDataFJError(Exception):
-    """Raised when data fields do not meet Software FJ standards."""
-    def __init__(self, message="The provided data is invalid."):
-        super().__init__(message)
-        logging.error(f"Custom Exception Triggered: {message}")
+    pass
 
+
+# Identifica un servicio que no se puede utilizar.
 class ServiceNotAvailableFJError(Exception):
-    """Raised when a specific Software FJ service is inactive or not found."""
-    def __init__(self, message="The requested service is not available."):
-        super().__init__(message)
-        logging.error(f"Custom Exception Triggered: {message}")
+    pass
 
+
+# Identifica un fallo al confirmar o cancelar una reserva.
 class FailedReservationFJError(Exception):
-    """Raised when a reservation process fails due to business rule conflicts."""
-    def __init__(self, message="Reservation processing failed."):
-        super().__init__(message)
-        logging.error(f"Custom Exception Triggered: {message}")
+    pass
