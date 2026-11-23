@@ -40,3 +40,24 @@ Para ejecutar las pruebas unitarias desde la terminal:
 ```bash
 python -m unittest pruebas_unitarias.py
 ```
+
+## Integración del aporte de César Alejandro Calderón Albarrán
+
+Se incorporan las propiedades `Client.name` y `Service.base_cost` del archivo
+`Software_FJ - Aportes César.zip`, compartido en el foro el 21 de noviembre de 2026.
+Validan las asignaciones tanto al crear objetos como al modificar sus datos.
+También se incorporan sus comprobaciones de referencias antes de reservar
+o calcular costos en las simulaciones equivalentes de `Main.py`.
+Los bloques están identificados con comentarios `# César`.
+
+El ZIP también separa simulaciones y corrige el `else` de confirmación. Esos
+problemas ya estaban resueltos en el PR 1 integrado; se conserva esa solución
+sin reemplazarla por archivos anteriores. No se restauran las sustituciones
+de correos ni los retornos de costos ante errores que aún contenía el ZIP.
+
+Fuente: publicación de César en el foro del grupo:
+https://campus141.unad.edu.co/ses114/mod/forum/discuss.php?d=20986#p290851
+
+El ZIP contiene únicamente dos archivos Python, sin documento de conclusiones.
+Este commit registra su incorporación técnica; no sustituye una publicación
+o participación personal de César desde su propia cuenta de GitHub.

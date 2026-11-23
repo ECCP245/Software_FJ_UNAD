@@ -1,5 +1,6 @@
 # Código base: Software_FJ_UNAD de Evelyn Carolina Calvache Pabón.
-# Aporte de Yeison: corregir el flujo de errores sin cambiar las clases del proyecto.
+# Aporte de Yeison: excepciones y estados.
+# Integración del ZIP de César: propiedades name y base_cost.
 
 # logging registra los eventos de las reservas.
 import logging
@@ -26,13 +27,22 @@ class Client(AbstractEntityFJ):
     def __init__(self, entity_id, name, email):
         # Inicializa el identificador heredado.
         super().__init__(entity_id)
-        # Rechaza nombres vacíos antes de registrar el cliente.
-        if not isinstance(name, str) or name.strip() == "":
-            raise InvalidDataFJError("Client name cannot be empty.")
-        # Guarda el nombre sin espacios en los extremos.
-        self.name = name.strip()
+        # César: name valida el nombre al crear y modificar el cliente.
+        self.name = name
         # Esta asignación ejecuta la validación de la propiedad email.
         self.email = email
+
+    # Aporte original de César: encapsulación y validación de name.
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        if not isinstance(value, str) or not value.strip():
+            raise InvalidDataFJError("El nombre del cliente no puede estar vacio.")
+        self._name = value.strip()
+
 
     @property
     def email(self):
@@ -55,12 +65,22 @@ class Client(AbstractEntityFJ):
 # Clase abstracta común a los tres servicios.
 class Service(ABC):
     def __init__(self, service_code, base_cost):
-        # Impide crear un servicio con costo negativo.
-        if base_cost < 0:
-            raise InvalidDataFJError("Base cost cannot be negative.")
         # Guarda los datos comunes de los servicios.
         self.service_code = service_code
         self.base_cost = base_cost
+
+    # Aporte original de César: validación del costo también al modificarlo.
+    @property
+    def base_cost(self) -> float:
+        return self._base_cost
+
+    @base_cost.setter
+    def base_cost(self, value: float):
+        if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
+            raise InvalidDataFJError("El costo base no puede ser negativo y debe ser numerico.")
+
+        self._base_cost = float(value)
+
 
     @abstractmethod
     def calculate_cost(self):

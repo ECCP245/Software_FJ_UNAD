@@ -4,6 +4,8 @@
 # Importa el registro de eventos y el manejo de rutas de archivos.
 import logging
 import os
+# César: excepción para comprobar referencias necesarias antes de utilizarlas.
+from exceptions import ServiceNotAvailableFJError
 # Importa las clases originales, con las correcciones del aporte.
 from models import Client, RoomReservationService, EquipmentRentalService
 from models import SpecializedConsultingService, Reservation
@@ -109,6 +111,9 @@ if __name__ == "__main__":
 
     # Simulación 8: confirma una reserva y ejecuta su bloque else.
     try:
+        # César: comprueba las referencias antes de reservar.
+        if c1 is None or s1 is None:
+            raise ServiceNotAvailableFJError("Cliente o servicio de sala no disponible.")
         r1 = Reservation("R101", c1, s1, 3)
         mensaje = r1.confirm_reservation()
         reservations_list.append(r1)
@@ -119,6 +124,9 @@ if __name__ == "__main__":
 
     # Simulación 9: una duración cero produce una excepción encadenada.
     try:
+        # César: comprueba que existan cliente y servicio de equipos.
+        if c1 is None or s2 is None:
+            raise ServiceNotAvailableFJError("Cliente o servicio de equipo no disponible.")
         r2 = Reservation("R102", c1, s2, 0)
         mensaje = r2.confirm_reservation()
         reservations_list.append(r2)
@@ -139,6 +147,9 @@ if __name__ == "__main__":
 
     # Simulación 11: calcula el costo de sala con los parámetros opcionales.
     try:
+        # César: evita utilizar un servicio que no pudo crearse.
+        if s1 is None:
+            raise ServiceNotAvailableFJError("Servicio de sala no disponible.")
         costo_sala = s1.calculate_cost(discount=0.15, tax=0.19)
     except Exception as error:
         registrar_error(11, error)
@@ -163,6 +174,9 @@ if __name__ == "__main__":
 
     # Simulación 14: calcula el alquiler de equipos después de un error anterior.
     try:
+        # César: comprueba que el servicio de equipos exista.
+        if s2 is None:
+            raise ServiceNotAvailableFJError("Servicio de equipos no disponible.")
         costo_equipo = s2.calculate_cost(hours=5, insurance_fee=15.0)
     except Exception as error:
         registrar_error(14, error)
