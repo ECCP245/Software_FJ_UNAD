@@ -1,63 +1,84 @@
-# Sistema de Gestión de Clientes Servicios y Reservas Software FJ
+# Software FJ
 
-Proyecto desarrollado para el curso Programación, Código: 213023 de la Universidad Nacional Abierta y a Distancia (UNAD) — Fase 4: Componente Práctico Prácticas Simuladas.
+Proyecto de Programación 213023, Fase 4, grupo 110, UNAD.
+Gestiona clientes, servicios y reservas mediante objetos y listas en memoria.
+Solo se escribe un archivo para registrar eventos y errores; no usa bases de datos.
 
-## Descripción del Proyecto
-Sistema de gestión en Python orientado a objetos que administra los clientes, reservas, servicios de Software FJ, funciona en memoria usando objetos y listas sin bases de datos y manejo de excepciones y registro de errores.
+## Ejecución
 
-## Estructura del Repositorio
-* `exceptions.py`: Define las excepciones personalizadas del sistema (`InvalidDataFJError`, `ServiceNotAvailableFJError`, `FailedReservationFJError`).
-* `models.py`: Contiene la arquitectura orientada a objetos (`AbstractEntityFJ`, `Client`, `Service`, `RoomReservationService`, `EquipmentRentalService`, `SpecializedConsultingService`, `Reservation`) aplicando abstracción, herencia, encapsulación, polimorfismo y sobrecarga de métodos.
-* `Main.py`: Script principal que configura el sistema de logs y ejecuta las simulaciones completas sin interrumpir la ejecución.
-* `pruebas_unitarias.py`: Suite de pruebas automatizadas con `unittest` comentada línea por línea para validar excepciones, clientes, servicios y reservas.
-* `fj_software_exceptions.log`: Archivo generado automáticamente al ejecutar el programa donde se registran los errores y eventos relevantes.
+Requiere Python 3.9 o posterior y no necesita instalar paquetes adicionales.
 
-## Requisitos y Ejecución
-1. Asegúrese de tener **Python 3.9 o posterior** instalado (No requiere librerías externas).
-2. Clone el repositorio o descargue los archivos en una misma carpeta.
-3. Ejecute el archivo principal desde la terminal:
 ```bash
 python Main.py
 ```
 
-## Aporte de Yeison Andrés Bran Henao
+Se procesan 22 simulaciones: 13 operaciones válidas y 9 errores intencionales controlados.
+La última operación válida demuestra continuidad después de los errores.
+El registro queda en `fj_software_exceptions.log`, junto al programa.
 
-Se corrige la propagación de errores y se conserva la causa del fallo de una reserva con `raise ... from ...`. El bloque `else` confirma únicamente las reservas válidas y `finally` asegura el cierre operativo y la escritura del registro en `fj_software_exceptions.log`.
+## Archivos
 
-Los casos inválidos son intencionales; ver mensajes `ERROR CONTROLADO` es parte del resultado esperado. El detalle queda en `fj_software_exceptions.log`. Este aporte se prepara sobre la rama `aporte-yeison-excepciones-simulaciones` para su revisión e integración mediante Pull Request.
+- `models.py`: entidades, cliente, servicios y reserva.
+- `exceptions.py`: tres excepciones personalizadas.
+- `Main.py`: registro de eventos y simulaciones independientes.
+- `pruebas_unitarias.py`: siete pruebas originales de Jaminton con ajustes de compatibilidad.
+- `pruebas_completacion.py`: comprobaciones de validación y procesamiento.
 
-## Aporte de Jaminton Trespalacios Castillo (JamintonTC)
+## Pruebas
 
-Se integra la suite de pruebas unitarias automatizadas en el archivo `pruebas_unitarias.py` utilizando la librería estándar `unittest` de Python, completamente documentada línea por línea con comentarios `#`.
-
-Las pruebas validan de forma automatizada:
-- Registro correcto de clientes y lanzamiento de `InvalidDataFJError` ante nombres vacíos.
-- Rechazo de servicios con costos base negativos.
-- Cálculos polimórficos de tarifas para alquiler de equipos y asesorías especializadas.
-- Confirmación exitosa de reservas y manejo controlado de reservas con duración inválida mediante `FailedReservationFJError`.
-
-Para ejecutar las pruebas unitarias desde la terminal:
 ```bash
-python -m unittest pruebas_unitarias.py
+python -m unittest -v pruebas_unitarias pruebas_completacion
 ```
 
-## Integración del aporte de César Alejandro Calderón Albarrán
+## Diseño
 
-Se incorporan las propiedades `Client.name` y `Service.base_cost` del archivo
-`Software_FJ - Aportes César.zip`, compartido en el foro el 21 de noviembre de 2026.
-Validan las asignaciones tanto al crear objetos como al modificar sus datos.
-También se incorporan sus comprobaciones de referencias antes de reservar
-o calcular costos en las simulaciones equivalentes de `Main.py`.
-Los bloques están identificados con comentarios `# César`.
+`AbstractEntityFJ` y `Service` son clases abstractas. `Client` hereda de la entidad general;
+los servicios de salas, equipos y asesorías heredan de `Service`.
+Las propiedades `name`, `email` y `base_cost` validan las asignaciones.
+Los métodos de costos y descripción se sobrescriben en los servicios.
+Los parámetros opcionales de `calculate_cost` representan la sobrecarga simulada en Python;
+no se definen varios métodos del mismo nombre con firmas diferentes.
 
-El ZIP también separa simulaciones y corrige el `else` de confirmación. Esos
-problemas ya estaban resueltos en el PR 1 integrado; se conserva esa solución
-sin reemplazarla por archivos anteriores. No se restauran las sustituciones
-de correos ni los retornos de costos ante errores que aún contenía el ZIP.
+Una reserva comienza en Pending, puede confirmarse como Confirmed, cancelarse como Cancelled
+o procesarse como Processed. Un fallo de validación o procesamiento deja Failed.
+Solo una reserva confirmada puede procesarse; una procesada no puede confirmarse,
+procesarse ni cancelarse otra vez. El servicio puede marcarse como no disponible con `available`.
+Las excepciones se propagan hasta cada simulación, donde se registran y se permite continuar.
+`raise ... from ...` conserva la causa y `finally` registra el estado de los intentos validados.
 
-Fuente: publicación de César en el foro del grupo:
+## Criterio de costos
+
+El anexo no establece tarifas ni unidades exactas. En este proyecto la duración es una cantidad
+de unidades: sala y asesoría cobran su tarifa por unidad; equipos usa horas y un solo seguro.
+Las llamadas anteriores a `calculate_cost` mantienen las fórmulas y valores ya utilizados.
+El impuesto 0.19 es un parámetro de ejemplo de la base académica.
+No se implementan fechas, cruces de horario, interfaz gráfica ni bases de datos.
+
+## Participación
+
+- Evelyn Carolina Calvache Pabón: arquitectura y código base.
+- Yeison Andrés Bran Henao: excepciones y simulaciones del PR 1; cierre de validaciones,
+  procesamiento, documentación y compatibilidad de pruebas en esta versión.
+- Jaminton Trespalacios Castillo: suite de siete pruebas y documentación del PR 2.
+- César Alejandro Calderón Albarrán: propiedades `name` y `base_cost` y comprobaciones
+  previas de referencias, importadas de su ZIP por Yeison en un commit separado.
+
+Se conservan los commits originales. La integración del ZIP de César y las correcciones
+de funcionamiento son dos commits distintos creados por Yeison desde su propia rama.
+El primero reconoce a César en el mensaje, los comentarios y este README; no se utiliza
+su identidad como autor de Git ni se presenta como un commit publicado desde su cuenta.
+
+## Alcance del aporte de César y ajustes de cierre
+
+Fuente: `Software_FJ - Aportes César.zip`, publicado el 21 de noviembre de 2026:
 https://campus141.unad.edu.co/ses114/mod/forum/discuss.php?d=20986#p290851
 
-El ZIP contiene únicamente dos archivos Python, sin documento de conclusiones.
-Este commit registra su incorporación técnica; no sustituye una publicación
-o participación personal de César desde su propia cuenta de GitHub.
+El primer commit incorpora sus propiedades y guardas sobre la versión actual. La
+separación de simulaciones y la corrección del `else` que también propuso ya estaban
+resueltas en el PR 1 y se conservan. El segundo commit amplía su propiedad de costo
+para rechazar `NaN` e infinito, completa el procesamiento de reservas y ajusta las
+pruebas incompatibles de Jaminton. Mantiene la propagación de correos y cálculos
+inválidos; no recupera los valores de reemplazo que todavía aparecían en el ZIP.
+
+El ZIP contiene únicamente `main.py` y `models.py`, sin conclusiones formales. El
+informe final describe su contribución técnica sin atribuirle conclusiones nuevas.
