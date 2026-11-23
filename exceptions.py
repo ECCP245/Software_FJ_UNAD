@@ -5,14 +5,14 @@
 
 # Identifica errores en los datos de entrada.
 class InvalidDataFJError(Exception):
-    pass
+    pass  # Deja la implementación a la clase hija o a Exception.
 
 
 # Identifica un servicio que no se puede utilizar.
 class ServiceNotAvailableFJError(Exception):
-    pass
+    pass  # Deja la implementación a la clase hija o a Exception.
 
 
 # Identifica un fallo al confirmar o cancelar una reserva.
 class FailedReservationFJError(Exception):
-    pass
+    pass  # Deja la implementación a la clase hija o a Exception.

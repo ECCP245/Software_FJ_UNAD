@@ -1,3 +1,5 @@
+# Suite original de Jaminton Trespalacios Castillo, integrada mediante el PR 2.
+# Ajustes de compatibilidad realizados por Yeison Andrés Bran Henao.
 # Importamos el módulo unittest estándar de Python para crear y ejecutar pruebas automatizadas
 import unittest
 # Importamos las excepciones personalizadas definidas en el módulo exceptions.py
@@ -41,33 +43,34 @@ class TestSoftwareFJ(unittest.TestCase):
     def test_calculo_costo_asesoria(self):
         # Creamos un servicio de asesoría especializada con tarifa base de 100.0
         asesoria = SpecializedConsultingService("A10", 100.0, "Ciberseguridad")
-        # Calculamos el costo para 2 sesiones aplicando el 19% de IVA (200 * 1.19 = 238.0)
-        total = asesoria.calculate_cost(sessions=2, tax=0.19)
-        # Verificamos que el resultado con impuestos coincida con 238.0
-        self.assertAlmostEqual(total, 238.0)
+        # Calculamos el costo con factor de complejidad 2 (100 * 2 = 200.0)
+        total = asesoria.calculate_cost(complexity_factor=2.0)
+        # Verificamos que el costo coincida con la fórmula de asesoría del proyecto
+        self.assertAlmostEqual(total, 200.0)
 
     # Prueba 6: Verificar que una reserva válida se confirme y cambie su estado
     def test_confirmacion_reserva_valida(self):
         # Creamos un cliente y un servicio de sala válidos para la reserva
         cliente = Client("C12", "Pedro Ruiz", "pedro@softwarefj.com")
-        sala = RoomReservationService("S12", 150.0, 20)
+        sala = RoomReservationService("S12", 150.0, 20)  # Guarda el dato o el resultado para usarlo después.
         # Instanciamos una reserva válida con duración de 2 horas
         reserva = Reservation("R100", cliente, sala, duration=2)
         # Ejecutamos el método de confirmación de la reserva
         resultado = reserva.confirm_reservation()
-        # Comprobamos que el mensaje retornado contenga la palabra CONFIRMED
-        self.assertIn("CONFIRMED", resultado)
+        # Comprobamos el estado confirmado y el mensaje devuelto
+        self.assertEqual(reserva.status, "Confirmed")
+        self.assertIn("confirmed", resultado.lower())  # Comprueba el resultado esperado de la prueba.
 
     # Prueba 7: Verificar que una reserva con duración cero falle de forma controlada
     def test_reserva_duracion_invalida(self):
         # Creamos un cliente y un servicio válidos para la prueba de error
         cliente = Client("C13", "Sofia Gomez", "sofia@softwarefj.com")
-        sala = RoomReservationService("S13", 100.0, 15)
+        sala = RoomReservationService("S13", 100.0, 15)  # Guarda el dato o el resultado para usarlo después.
         # Instanciamos una reserva inválida con duración igual a 0
         reserva = Reservation("R101", cliente, sala, duration=0)
         # Verificamos que al intentar confirmarla se lance la excepción FailedReservationFJError
         with self.assertRaises(FailedReservationFJError):
-            reserva.confirm_reservation()
+            reserva.confirm_reservation()  # Confirma la reserva después de validar sus datos.
 
 
 # Punto de entrada principal para ejecutar la suite de pruebas directamente
